@@ -1,5 +1,0 @@
-easyocr~=1.7.1
-fuzzywuzzy~=0.18.0
-numpy~=1.26.1
-opencv-python~=4.8.0.76
-ultralytics~=8.0.184

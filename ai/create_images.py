@@ -5,7 +5,7 @@ import time
 from ultralytics import YOLO
 
 # Load the YOLOv8 model
-model = YOLO('Autofill_fin/best.pt')
+model = YOLO('../Autofill_fin/best.pt')
 
 # Define the dimensions of the rectangle
 rectangle_width = 900
@@ -54,7 +54,7 @@ def shoot():
         inside_rect = cv2.bitwise_and(frame, rectangle_mask)
 
         # Darken the area outside the rectangle
-        alpha = 0.3 
+        alpha = 0.3
         outside_rect = cv2.addWeighted(frame, 1 - alpha, inside_rect, alpha, 0)
 
         # Resize the frame for display
@@ -82,24 +82,29 @@ def close():
         results = model(cap)
         n = 0
         previous_n = None
-        Date_of_birth_found=False
-        i1=True
-        Date_of_expiry_found=False
-        i2=True
-        Document_num_found=False
-        i3=True
-        ID_cards_found=False
-        i4=True
-        Name_found=False
-        i5=True
-        Nationality_found=False
-        i6=True
-        Patronomycs_found=False   
-        i7=True
-        Sex_found=False
-        i8=True
-        Surname_found=False
-        i9=True
+        data = {
+            0: ['Date_of_birth_found', False],
+            1: ['Date_of_expiry_found', False],
+            2: ['Document_of_num_found', False],
+            3: ['ID_card_found', False],
+            4: ['Name_found', False],
+            5: ['Nationality_found', False],
+            6: ['Patronymics_found', False],
+            7: ['Sex_found', False],
+            8: ['Surname_found', False],
+        }
+        id_ = {
+            0: ['id_1', True],
+            1: ['id_2', True],
+            2: ['id_3', True],
+            3: ['id_4', True],
+            4: ['id_5', True],
+            5: ['id_6', True],
+            6: ['id_7', True],
+            7: ['id_8', True],
+            8: ['id_9', True],
+        }
+
         # Visualize the results on the frame
         annotated_frame = results[0].plot()
 
@@ -112,89 +117,17 @@ def close():
             for i, box in enumerate(boxes):
                 if (box.conf[0] > 0.5):
                     cls = int(box.cls[0])
-
                     # check the classes
-                    if cls == 0:
-                        Date_of_birth_found = True
-                    if cls == 1:
-                        Date_of_expiry_found = True
-                    if cls == 2:
-                        Document_num_found = True
-                    if cls == 3:
-                        ID_cards_found = True
-                    if cls == 4:
-                        Name_found = True
-                    if cls == 5:
-                        Nationality_found = True
-                    if cls == 6:
-                        Patronomycs_found = True
-                    if cls == 7:
-                        Sex_found = True
-                    if cls == 8:
-                        Surname_found = True
+                    data[cls][1] = True
 
-                # # save found classes
-                # for index, item in enumerate(classes_list):
-                #     if item and globals()[f"i{index+1}"]:
-                #         n += 1
-                #         r = box.xyxy[0].astype(int)
-                #         crop = cap[r[1]:r[3], r[0]:r[2]]
-                #         cv2.imwrite(str(cls) + ".jpg", crop)
-                #         globals()[f"i{index+1}"] = False
-                if Date_of_birth_found and i1:
-                    n += 1
-                    r = box.xyxy[0].astype(int)
-                    crop = cap[r[1]:r[3], r[0]:r[2]]
-                    cv2.imwrite('Autofill_fin/for_detecting/'+ str(cls) + ".jpg", crop)
-                    i1 = False
-                if Date_of_expiry_found and i2:
-                    n += 1
-                    r = box.xyxy[0].astype(int)
-                    crop = cap[r[1]:r[3], r[0]:r[2]]
-                    cv2.imwrite('Autofill_fin/for_detecting/'+ str(cls) + ".jpg", crop)
-                    i2 = False
-                if Document_num_found and i3:
-                    n += 1
-                    r = box.xyxy[0].astype(int)
-                    crop = cap[r[1]:r[3], r[0]:r[2]]
-                    cv2.imwrite('Autofill_fin/for_detecting/'+ str(cls) + ".jpg", crop)
-                    i3 = False
-                if ID_cards_found and i4:
-                    n += 1
-                    r = box.xyxy[0].astype(int)
-                    crop = cap[r[1]:r[3], r[0]:r[2]]
-                    cv2.imwrite('Autofill_fin/for_detecting/'+ str(cls) + ".jpg", crop)
-                    i4 = False
-                if Name_found and i5:
-                    n += 1
-                    r = box.xyxy[0].astype(int)
-                    crop = cap[r[1]:r[3], r[0]:r[2]]
-                    cv2.imwrite('Autofill_fin/for_detecting/'+ str(cls) + ".jpg", crop)
-                    i5 = False
-                if Nationality_found and i6:
-                    n += 1
-                    r = box.xyxy[0].astype(int)
-                    crop = cap[r[1]:r[3], r[0]:r[2]]
-                    cv2.imwrite('Autofill_fin/for_detecting/'+ str(cls) + ".jpg", crop)
-                    i6 = False
-                if Patronomycs_found and i7:
-                    n += 1
-                    r = box.xyxy[0].astype(int)
-                    crop = cap[r[1]:r[3], r[0]:r[2]]
-                    cv2.imwrite('Autofill_fin/for_detecting/'+ str(cls) + ".jpg", crop)
-                    i7 = False
-                if Sex_found and i8:
-                    n += 1
-                    r = box.xyxy[0].astype(int)
-                    crop = cap[r[1]:r[3], r[0]:r[2]]
-                    cv2.imwrite('Autofill_fin/for_detecting/'+ str(cls) + ".jpg", crop)
-                    i8 = False
-                if Surname_found and i9:
-                    n += 1
-                    r = box.xyxy[0].astype(int)
-                    crop = cap[r[1]:r[3], r[0]:r[2]]
-                    cv2.imwrite('Autofill_fin/for_detecting/'+ str(cls) + ".jpg", crop)
-                    i9 = False
+                for j in range(len(data)):
+                    if data[j][1] and id_[j][1]:
+                        n += 1
+                        r = box.xyxy[0].astype(int)
+                        crop = cap[r[1]:r[3], r[0]:r[2]]
+                        cv2.imwrite('Autofill_fin/for_detecting/' + str(cls) + ".jpg", crop)
+                        id_[j][1] = False
+
             # print n when its value changes
             if n != previous_n:
                 print("n:", n)
@@ -209,15 +142,9 @@ def close():
         if cv2.waitKey(1) & 0xFF == ord("b"):
             break
 
-    # while True:
-    #     cv2.imshow('Captured Image', captured_image)
-
-    #     # Check for the 'b' key to exit the loop
-    #     if cv2.waitKey(1) & 0xFF == ord('b'):
-    #         break
-
     print('stop')
     fin = True
+
 
 if __name__ == '__main__':
     p1 = threading.Thread(target=shoot)
